@@ -67,7 +67,8 @@ def home():
 
     return render_template(
         'home.html',
-        habits=[h.name for h in habits],
+        # habits=[h.name for h in habits],
+        habits=habits,
         days=days,
         habit_data=habit_data,
         goals=goals

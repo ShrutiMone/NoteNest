@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block body %}
+<div class="container mt-5">
+  <div class="card rounded-4 p-4 shadow col-md-4 mx-auto">
+    <h4 class="mb-3 text-center">🔒 Enter Password</h4>
+    <form method="post">
+      <input type="password" name="password" class="form-control rounded-pill mb-3" placeholder="Password" required>
+      <button type="submit" class="btn btn-primary w-100 rounded-pill">Login</button>
+    </form>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, msg in messages %}
+          <div class="alert alert-{{ category }} mt-3">{{ msg }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+</div>
+{% endblock %}

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
@@ -12,6 +12,9 @@ db_path = os.path.join('/mnt/data', 'tracker.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+APP_PASSWORD = os.getenv("APP_PASSWORD")
+app.secret_key = os.getenv("SECRET_KEY", "dev")  # Add a secure key in .env too
 
 # Models
 class Habit(db.Model):
@@ -52,8 +55,27 @@ class LongTermGoal(db.Model):
     progress = db.Column(db.Integer, default=0)    # number of completed points
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        entered_password = request.form['password']
+        if entered_password == APP_PASSWORD:
+            session['authenticated'] = True
+            return redirect(url_for('home'))
+        else:
+            flash('Incorrect password.', 'danger')
+    return render_template('login.html', show_navbar=False)
+
+@app.route('/logout')
+def logout():
+    session.pop('authenticated', None)
+    return redirect(url_for('login'))
+
 @app.route('/')
 def home():
+    if not session.get('authenticated'):
+        return redirect(url_for('login'))
+    
     days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
     habits = Habit.query.all()

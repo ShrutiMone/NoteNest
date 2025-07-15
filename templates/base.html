@@ -13,7 +13,7 @@
   
 </head>
 <body class="bg-light">
-
+  {% if show_navbar is not defined or show_navbar %}
   <nav class="navbar navbar-expand-lg flex-column">
   <div class="container justify-content-center">
     <span class="navbar-brand mb-1 h1 fw-semibold">NoteNest 🪺</span>
@@ -26,6 +26,7 @@
     </div>
   </div>
 </nav>
+{% endif %}
   {% block body %}{% endblock %}
   {% block scripts %}{% endblock %}
 </body>

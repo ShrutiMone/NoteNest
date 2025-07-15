@@ -85,9 +85,17 @@ def add_habit():
         db.session.commit()
     return redirect(url_for('home'))
 
-@app.route('/delete_habit/<name>')
-def delete_habit(name):
-    habit = Habit.query.filter_by(name=name).first()
+# @app.route('/delete_habit/<name>')
+# def delete_habit(name):
+#     habit = Habit.query.filter_by(name=name).first()
+#     if habit:
+#         db.session.delete(habit)
+#         db.session.commit()
+#     return redirect(url_for('home'))
+
+@app.route('/delete_habit/<int:id>')
+def delete_habit(id):
+    habit = Habit.query.get(id)
     if habit:
         db.session.delete(habit)
         db.session.commit()

@@ -34,7 +34,7 @@
           {% endfor %}
           <td>
             <div class="pb-1">
-            <a href="{{ url_for('delete_habit', name=habit) }}" class="btn btn-sm text-danger">
+            <a href="{{ url_for('delete_habit', id=habit.id) }}" class="btn btn-sm text-danger">
               <i class="fas fa-trash-alt"></i>
             </a>
           </div>

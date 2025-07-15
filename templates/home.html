@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}Goals & Habits{% endblock %}
+{% block body %}
+<div class="container py-4">
+
+  <div class="row gx-4">
+    <!-- HABIT TRACKER -->
+     <div class="col-md-7">
+      <div class="card rounded-4 mb-4 shadow p-4">
+        <h4 class="mb-3">✅ Habit Tracker</h4>
+        <form action="/add_habit" method="post" class="mb-3 d-flex gap-2">
+          <input name="habit" required class="form-control rounded-pill" placeholder="New Habit">
+          <button type="submit" class="btn btn-primary rounded-pill"><i class="fas fa-plus"></i></button>
+        </form>
+        <table class="table table-sm table-borderless align-middle">
+    <thead>
+      <tr>
+        <th>Habit</th>
+        {% for day in days %}
+          <th style="width: 50px;" class="text-center">{{ day }}</th>
+        {% endfor %}
+        <th style="width: 50px;"></th> <!-- for delete icon -->
+      </tr>
+    </thead>
+    <tbody>
+      {% for habit in habits %}
+        <tr>
+          <td>{{ habit }}</td>
+          {% for i in range(7) %}
+            <td class="text-center">
+              <input type="checkbox" onchange="toggleCheckbox('{{ habit }}', {{ i }}, this.checked)"
+                {% if habit_data[habit][i] %}checked{% endif %}>
+            </td>
+          {% endfor %}
+          <td>
+            <div class="pb-1">
+            <a href="{{ url_for('delete_habit', name=habit) }}" class="btn btn-sm text-danger">
+              <i class="fas fa-trash-alt"></i>
+            </a>
+          </div>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+        </table>
+        <div class="text-end">
+          <a href="/uncheck_all" class="btn btn-warning rounded-pill mt-2">Uncheck All</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- GOAL TRACKER -->
+     <div class="col-md-5">
+    <div class="card rounded-4 shadow p-4">
+      <h4 class="mb-3">🎯 Goal Tracker</h4>
+      <form action="/add_goal" method="post" class="mb-3 row g-2 align-items-center">
+        <div class="col"><input name="goal_name" required class="form-control rounded-pill" placeholder="Goal name"></div>
+        <div class="col">
+          <select name="goal_habit" required class="form-select rounded-pill">
+            {% for habit in habits %}<option>{{ habit }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="col"><input type="number" name="target_count" min="1" required class="form-control rounded-pill" placeholder="Target count"></div>
+        <div class="col-auto">
+          <button class="btn btn-primary rounded-pill"><i class="fas fa-plus"></i></button>
+        </div>
+      </form>
+
+      {% for goal in goals %}
+      <div class="mb-3">
+        <div class="d-flex justify-content-between">
+          {{ goal.name }} ({{ goal.progress }}/{{ goal.target }})
+          <a href="/delete_goal/{{ goal.name }}" class="text-danger"><i class="fas fa-trash-alt"></i></a>
+        </div>
+        <div class="progress rounded-pill">
+          <div class="progress-bar bg-success" style="width: {{ (goal.progress / goal.target) * 100 }}%">
+            {{ ((goal.progress / goal.target) * 100) | round(0) }}%
+          </div>
+        </div>
+
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function toggleCheckbox(habit, index, value) {
+    fetch("/toggle_checkbox", {
+      method: "POST",
+      body: JSON.stringify({ habit, index, value }),
+      headers: { "Content-Type": "application/json" }
+    }).then(response => {
+      if (response.ok) {
+        location.reload();
+      }
+    });
+  }
+</script>
+{% endblock %}

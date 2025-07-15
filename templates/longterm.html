@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}Long Term Goals{% endblock %}
+{% block body %}
+
+<div class="container my-4">
+  <h2 class="text-center mb-4">Long Term Goals</h2>
+
+  <!-- Add Goal Form -->
+  <form method="POST" action="{{ url_for('add_longterm') }}" class="p-4 bg-light rounded-4 shadow-sm mb-5">
+    <div class="row g-3 align-items-center">
+      <div class="col-md-4">
+        <input type="text" name="title" class="form-control rounded-pill" placeholder="Goal Title" required>
+      </div>
+      <div class="col-md-2">
+        <select name="type" class="form-select rounded-pill" required>
+          <option value="monthly">Monthly</option>
+          <option value="yearly">Yearly</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <input type="text" name="description" class="form-control rounded-pill" placeholder="Optional Description">
+      </div>
+      <div class="col-md-2">
+        <input type="number" name="milestones" class="form-control rounded-pill" placeholder="Milestones" min="1">
+      </div>
+      <div class="col-md-1">
+        <button class="btn btn-success rounded-pill"><i class="fas fa-plus"></i></button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Columns for Monthly and Yearly Goals -->
+  <div class="row">
+    <!-- Monthly -->
+    <div class="col-md-6">
+      <h4 class="mb-3">📅 Monthly Goals</h4>
+      {% for goal in goals if goal.type == 'monthly' %}
+        {% include 'goal_card.html' %}
+      {% endfor %}
+    </div>
+
+    <!-- Yearly -->
+    <div class="col-md-6">
+      <h4 class="mb-3 text-purple">📆 Yearly Goals</h4>
+      {% for goal in goals if goal.type == 'yearly' %}
+        {% include 'goal_card.html' %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<!-- same JavaScript for toggle, updateProgress, deleteGoal -->
+<script>
+  function toggleComplete(id) {
+    fetch(`/toggle_longterm/${id}`, { method: 'POST' });
+  }
+
+  function updateProgress(id, action) {
+    fetch(`/update_progress/${id}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action })
+    }).then(() => location.reload());
+  }
+
+  function deleteGoal(id) {
+    if (confirm("Delete this goal?")) {
+      fetch(`/delete_longterm/${id}`, { method: 'POST' })
+        .then(() => location.reload());
+    }
+  }
+</script>
+{% endblock %}

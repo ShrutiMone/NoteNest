@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block title %}ToDo Notes{% endblock %}
+{% block body %}
+<div class="container mt-4">
+  <form method="POST" action="{{ url_for('add_note') }}" class="mb-4 d-flex gap-2">
+    <input name="title" class="form-control rounded-pill" placeholder="Note Title" required>
+
+    <!-- Hidden input to store selected color -->
+    <input type="hidden" name="color" id="selectedColor" value="#FFCB61">
+
+    <!-- Color circle picker -->
+    <div class="d-flex gap-2 align-items-center flex-wrap" id="colorOptions">
+        {% for color in ['#FFCB61', '#90EE90', '#87CEFA', '#FFA07A', '#E0FFFF'] %}
+        <div class="color-circle" data-color="{{ color }}" style="background-color: {{ color }}"></div>
+        {% endfor %}
+    </div>
+
+    <button class="btn btn-primary rounded-pill"><i class="fas fa-plus"></i></button>
+  </form>
+
+  <div class="position-relative" id="note-area" style="min-height: 600px;">
+    {% for note in notes %}
+      <div class="note shadow position-absolute rounded"
+           id="note-{{ note.id }}"
+           data-id="{{ note.id }}"
+           style="left: {{ note.pos_x }}px; top: {{ note.pos_y }}px; width: {{ note.width }}px; height: {{ note.height }}px; background-color: {{ note.color }}; padding: 10px;">
+        <div class="d-flex justify-content-between align-items-start">
+            <h5 class="fw-bold">{{ note.title }}</h5>
+            <button class="btn btn-sm btn-outline-danger rounded-circle ms-2 delete-note" data-id="{{ note.id }}" title="Delete">
+            <i class="fas fa-trash"></i>
+            </button>
+        </div>
+        <textarea class="sticknote_write_area form-control border-0 bg-transparent h-100 mt-2 content-area"
+                  placeholder="Write here...">{{ note.content }}</textarea>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
+<script>
+  $(function () {
+    $(".note").each(function () {
+      const note = $(this);
+      const id = note.data("id");
+
+      note.draggable({
+        stop: function (_, ui) {
+          saveNotePosition(id, ui.position.left, ui.position.top, note.width(), note.height());
+        }
+      }).resizable({
+        stop: function (_, ui) {
+          saveNotePosition(id, ui.position.left, ui.position.top, ui.size.width, ui.size.height);
+        }
+      });
+
+      note.find(".content-area").on("blur", function () {
+        const content = $(this).val();
+        $.post(`/update_note/${id}`, { content });
+      });
+    });
+
+    function saveNotePosition(id, x, y, width, height) {
+      $.ajax({
+        url: `/update_note_position/${id}`,
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ x, y, width, height })
+      });
+    }
+  });
+
+  $('.delete-note').on('click', function (e) {
+  e.stopPropagation();
+  const id = $(this).data('id');
+  if (confirm("Delete this note?")) {
+    $.post(`/delete_note/${id}`).done(() => {
+      $(`#note-${id}`).remove();
+    });
+  }
+});
+</script>
+
+<script>
+  function updateColorPreview() {
+    const select = document.getElementById('colorSelect');
+    const preview = document.getElementById('colorPreview');
+    preview.style.backgroundColor = select.value;
+  }
+  updateColorPreview();
+</script>
+
+<script>
+  document.querySelectorAll('.color-circle').forEach(circle => {
+    circle.addEventListener('click', function () {
+      const color = this.getAttribute('data-color');
+      document.getElementById('selectedColor').value = color;
+
+      // Deselect all, then select the clicked one
+      document.querySelectorAll('.color-circle').forEach(c => c.classList.remove('selected'));
+      this.classList.add('selected');
+    });
+  });
+
+  // Optional: select default color on load
+  document.querySelector('.color-circle[data-color="#FFCB61"]').classList.add('selected');
+</script>
+{% endblock %}

@@ -1,0 +1,129 @@
+.navbar-brand{
+  font-weight: bold;
+  font-size: 1.5rem;
+  font-family: 'Raleway', sans-serif;
+}
+
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.borderless td, .borderless th {
+  border: none !important;
+}
+
+.hoverable:hover {
+  background-color: #f0f0f0;
+  cursor: pointer;
+  transform: scale(1.02);
+  transition: all 0.3s ease;
+}
+
+.card {
+  border-radius: 2rem !important;
+}
+
+.btn, .form-control, .form-select {
+  border-radius: 2rem !important;
+}
+
+
+.note {
+  border-radius: 16px;
+  transition: box-shadow 0.2s ease-in-out;
+}
+
+.note:hover {
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+.sticknote_write_area:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.content-area {
+  resize: none;
+  overflow: auto;
+  min-height: 100px;
+}
+
+select option {
+  padding: 6px 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+select option:hover {
+  opacity: 0.85;
+}
+
+.color-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, border 0.2s ease;
+}
+
+/* .btn-orange{
+  background-color: #FF894F;
+  color: #000;
+  border-radius: 2rem !important;
+} */
+.color-circle:hover {
+  transform: scale(1.1);
+  border-color: #333;
+}
+
+.color-circle.selected {
+  border-color: #000;
+  box-shadow: 0 0 0 2px white, 0 0 0 4px #000;
+}
+
+.nav-link {
+  transition: all 0.2s ease-in-out;
+  color: #000;
+  font-weight: semibold;
+}
+
+.nav-link:hover {
+  background-color: #eaeaea;
+  transform: scale(1.05);
+}
+
+.nav-link.active {
+  background-color: #EA5B6F;
+  color: #ffffff;
+}
+
+.bg-purple {
+  background-color: #a770ef;
+  color: white;
+}
+
+.navbar{
+  background-color: #FFCB61;
+}
+
+.sticknote_write_area{
+  outline: none;
+  box-shadow: none;
+}
+
+ /* Headings: Raleway
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Raleway', sans-serif;
+    /* font-weight: 600; */
+  /* } */
+
+  /* Everything else: Josefin Slab
+  body, p, span, input, textarea, table, td, label {
+    font-family: 'Josefin Slab', serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+  } */
